@@ -1,0 +1,7 @@
+python-telegram-bot[all]
+google-genai
+aiosqlite
+python-dotenv
+apscheduler
+fastapi
+uvicorn

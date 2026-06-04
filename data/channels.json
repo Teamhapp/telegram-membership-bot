@@ -1,0 +1,28 @@
+{
+  "channels": [
+    {
+      "id": "channel_1",
+      "name": "Premium Signals",
+      "telegram_id": "-1001234567890",
+      "description": "Daily trading signals and market analysis.",
+      "price": "₹999",
+      "subscription_days": 30,
+      "payment_mode": "qr",
+      "upi_id": "yourname@upi",
+      "qr_image": "",
+      "payment_link": ""
+    },
+    {
+      "id": "channel_2",
+      "name": "VIP Mentorship",
+      "telegram_id": "-1009876543210",
+      "description": "1-on-1 mentorship and exclusive content.",
+      "price": "₹1999",
+      "subscription_days": 30,
+      "payment_mode": "qr",
+      "upi_id": "yourname@upi",
+      "qr_image": "",
+      "payment_link": ""
+    }
+  ]
+}
