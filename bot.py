@@ -104,11 +104,35 @@ async def _grant_channel_access(bot, user_id: int, chat_id: int, channel: dict):
 # ── handlers ──────────────────────────────────────────────────────────────────
 
 async def handle_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    u = update.effective_user
     user = await _load_user(update)
-    if user["subscription_state"] in (State.NEW, "NEW"):
-        await db.set_state(update.effective_user.id, State.BROWSING)
-    await tracker.track(update.effective_user.id, tracker.CHAT_START)
+    is_new = user["subscription_state"] in (State.NEW, "NEW")
+    if is_new:
+        await db.set_state(u.id, State.BROWSING)
+        await notify.new_user(u.id, u.username or "", u.first_name or "")
+    await tracker.track(u.id, tracker.CHAT_START)
     await update.message.reply_text("Hey 👋")
+
+
+async def handle_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    if user_id not in config.ADMIN_IDS:
+        return
+
+    from db import get_active_subscription_count, get_total_user_count
+    active = await get_active_subscription_count()
+    total = await get_total_user_count()
+    channels = ch_registry.load_all()
+    ch_names = ", ".join(c["name"] for c in channels)
+
+    await update.message.reply_text(
+        f"*Bot Status*\n"
+        f"Total users: {total}\n"
+        f"Active subscriptions: {active}\n"
+        f"Channels: {ch_names}\n"
+        f"Mode: {'webhook' if config.WEBHOOK_MODE else 'polling'}",
+        parse_mode="Markdown"
+    )
 
 
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -154,6 +178,11 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await tracker.track(user_id, tracker.PAYMENT_ATTEMPT, channel=channel["id"])
             await create_payment(context.bot, update.effective_chat.id, channel)
             await db.save_message(user_id, "assistant", "[sent payment info]", intent)
+            u = update.effective_user
+            if intent == "JOIN":
+                await notify.user_wants_to_join(user_id, u.username or str(user_id), channel["name"])
+            else:
+                await notify.renewal_requested(user_id, u.username or str(user_id), channel["name"])
         else:
             # channel unclear — let Gemini ask naturally
             channels = ch_registry.load_all()
@@ -265,7 +294,7 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await db.approve_payment(payment_id)
         await notify.payment_received(
             user_id, u.username or str(user_id),
-            result.get("amount", ""), result.get("utr", "")
+            result.get("amount", ""), result.get("utr", ""), channel["name"]
         )
         await _grant_channel_access(context.bot, user_id, update.effective_chat.id, channel)
     else:
@@ -275,6 +304,7 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"Payment shows as {status}. Send a successful payment screenshot."
         )
         await tracker.track(user_id, tracker.PAYMENT_REJECTED, status=status, channel=channel["id"])
+        await notify.payment_failed(user_id, u.username or str(user_id), status)
 
 
 # ── post-init ─────────────────────────────────────────────────────────────────
@@ -294,8 +324,12 @@ async def post_init(application: Application):
     t = threading.Thread(target=_run_api, daemon=True)
     t.start()
     logger.info(f"API running on {config.API_HOST}:{config.API_PORT}")
+
     channels = ch_registry.load_all()
-    logger.info(f"Loaded {len(channels)} channel(s): {[c['name'] for c in channels]}")
+    ch_names = [c["name"] for c in channels]
+    logger.info(f"Loaded {len(channels)} channel(s): {ch_names}")
+    mode = "webhook" if config.WEBHOOK_MODE else "polling"
+    await notify.bot_started(mode, ch_names)
 
 
 async def post_shutdown(application: Application):
@@ -313,6 +347,7 @@ def _build_app() -> Application:
         .build()
     )
     app.add_handler(CommandHandler("start", handle_start))
+    app.add_handler(CommandHandler("admin", handle_admin))
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
     return app

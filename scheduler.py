@@ -6,7 +6,9 @@ from config import DB_PATH
 from subscriptions.engine import State
 from analytics import tracker
 from access.telegram import revoke_access
+from admin import notifications as notify
 import channels as ch_registry
+import db as db_module
 
 logger = logging.getLogger(__name__)
 
@@ -105,10 +107,26 @@ async def check_expiries(bot: Bot):
                 parse_mode="Markdown",
             )
             await tracker.track(user_id, tracker.SUBSCRIPTION_EXPIRED, channel=channel_id)
+            await notify.subscription_expired(user_id, str(user_id), ch_name)
             logger.info(f"Expired uid={user_id} channel={channel_id}")
         except Exception as e:
             logger.warning(f"Expiry failed uid={user_id} channel={channel_id}: {e}")
             await _mark_expired(row["sub_id"], user_id)
+
+
+async def send_daily_summary(bot: Bot):
+    try:
+        active = await db_module.get_active_subscription_count()
+        total = await db_module.get_total_user_count()
+        await notify.daily_summary({
+            "new_users": 0,
+            "payments": 0,
+            "active_subs": active,
+            "expired": 0,
+            "suspicious": 0,
+        })
+    except Exception as e:
+        logger.warning(f"Daily summary failed: {e}")
 
 
 def start_scheduler(bot: Bot) -> AsyncIOScheduler:
@@ -119,6 +137,15 @@ def start_scheduler(bot: Bot) -> AsyncIOScheduler:
         hours=1,
         args=[bot],
         id="expiry_check",
+        replace_existing=True,
+    )
+    scheduler.add_job(
+        send_daily_summary,
+        trigger="cron",
+        hour=9,
+        minute=0,
+        args=[bot],
+        id="daily_summary",
         replace_existing=True,
     )
     scheduler.start()
