@@ -168,6 +168,10 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await tracker.track(user_id, tracker.PRICE_REQUEST)
     elif intent == "DETAILS":
         await tracker.track(user_id, tracker.DETAILS_REQUEST)
+    elif intent == "OBJECTION":
+        await tracker.track(user_id, tracker.OBJECTION)
+    elif intent == "PROOF":
+        await tracker.track(user_id, tracker.PROOF_REQUEST)
 
     # join / renewal
     if intent in ("JOIN", "RENEWAL"):
@@ -231,6 +235,17 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"User is exploring/browsing. They haven't asked to join yet.\n"
             f"Available channels:\n{ch_desc}\n"
             f"Ask one natural question to understand what they're looking for, then recommend the right channel."
+        )
+    elif intent == "OBJECTION":
+        extra = (
+            "User has an objection (price, value, comparison with free). "
+            "Acknowledge their concern first, then reframe calmly. Don't defend, don't pitch."
+        )
+    elif intent == "PROOF":
+        extra = (
+            "User has a trust concern or wants proof. "
+            "Respond with calm confidence: 2 years running, 200+ members, still active. "
+            "Don't share others' P&L — cite longevity and member retention instead."
         )
     elif subs:
         lines = [f"{s['channel_id']}: {s['status']} until {s['expires_at']}" for s in subs]

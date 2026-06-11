@@ -11,6 +11,8 @@ async def track(user_id: int, event: str, **kwargs):
 CHAT_START = "chat_start"
 PRICE_REQUEST = "price_request"
 DETAILS_REQUEST = "details_request"
+OBJECTION = "objection"
+PROOF_REQUEST = "proof_request"
 PAYMENT_ATTEMPT = "payment_attempt"
 PAYMENT_SUCCESS = "payment_success"
 PAYMENT_REJECTED = "payment_rejected"
