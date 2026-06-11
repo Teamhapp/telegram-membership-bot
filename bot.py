@@ -14,10 +14,11 @@ import api as api_module
 import channels as ch_registry
 from engine.conversation import (
     detect_intent, generate_reply, detect_language,
-    summarize_conversation, detect_channel,
+    summarize_conversation, detect_channel, detect_mood,
 )
 from engine.learning import analyze_for_faq
 from engine.ratelimit import is_allowed
+from engine.humanise import typing_then_reply
 from payments.gateway import create_payment
 from payments.screenshot import analyze as analyze_screenshot
 from access.telegram import grant_access
@@ -90,15 +91,15 @@ async def _grant_channel_access(bot, user_id: int, chat_id: int, channel: dict):
     await tracker.track(user_id, tracker.PAYMENT_SUCCESS, channel=channel["id"])
     try:
         link = await grant_access(bot, user_id, channel["telegram_id"])
-        await bot.send_message(
-            chat_id=chat_id,
-            text=f"Payment received 👍\n\nHere's your {channel['name']} access link:\n{link}",
+        await typing_then_reply(
+            bot, chat_id,
+            f"Payment received 👍\n\nHere's your {channel['name']} access link:\n{link}"
         )
         await tracker.track(user_id, tracker.ACCESS_GRANTED, channel=channel["id"])
         await notify.access_granted(user_id, str(user_id))
     except Exception as e:
         logger.error(f"Invite link error uid={user_id} channel={channel['id']}: {e}")
-        await bot.send_message(chat_id=chat_id, text="Payment received 👍\n\nSending access shortly.")
+        await typing_then_reply(bot, chat_id, "Payment received 👍\n\nSending access shortly.")
 
 
 # ── handlers ──────────────────────────────────────────────────────────────────
@@ -111,7 +112,7 @@ async def handle_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await db.set_state(u.id, State.BROWSING)
         await notify.new_user(u.id, u.username or "", u.first_name or "")
     await tracker.track(u.id, tracker.CHAT_START)
-    await update.message.reply_text("Hey 👋")
+    await typing_then_reply(context.bot, update.effective_chat.id, "Hey 👋")
 
 
 async def handle_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -145,13 +146,16 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     if not is_allowed(user_id):
-        await update.message.reply_text("Slow down a bit.")
+        await typing_then_reply(context.bot, update.effective_chat.id, "Slow down a bit.")
         return
 
     await _update_language(user_id, text, user.get("preferred_language"))
 
-    intent = await detect_intent(text, state)
-    logger.info(f"uid={user_id} state={state} intent={intent}")
+    intent, mood = await asyncio.gather(
+        detect_intent(text, state),
+        detect_mood(text),
+    )
+    logger.info(f"uid={user_id} state={state} intent={intent} mood={mood}")
 
     await db.save_message(user_id, "user", text, intent)
 
@@ -196,7 +200,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
             subs = await db.get_all_subscriptions(user_id)
             sub = subs[0] if subs else None
             reply = await generate_reply(user, sub, history, text, extra_context=extra)
-            await update.message.reply_text(reply)
+            await typing_then_reply(context.bot, update.effective_chat.id, reply)
             await db.save_message(user_id, "assistant", reply, intent)
         return
 
@@ -215,7 +219,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         history = await db.get_recent_messages(user_id)
         sub = await db.get_subscription(user_id)
         reply = await generate_reply(user, sub, history, text, extra_context=extra)
-        await update.message.reply_text(reply)
+        await typing_then_reply(context.bot, update.effective_chat.id, reply)
         await db.save_message(user_id, "assistant", reply, intent)
         return
 
@@ -251,8 +255,9 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         lines = [f"{s['channel_id']}: {s['status']} until {s['expires_at']}" for s in subs]
         extra = "Subscriptions: " + ", ".join(lines)
 
-    reply = await generate_reply(user, sub, history, text, extra_context=extra)
-    await update.message.reply_text(reply)
+    mood_note = f"\nUser mood right now: {mood}. Match your energy to this."
+    reply = await generate_reply(user, sub, history, text, extra_context=extra + mood_note)
+    await typing_then_reply(context.bot, update.effective_chat.id, reply)
     await db.save_message(user_id, "assistant", reply, intent)
 
     await _refresh_summary(user_id)
@@ -270,12 +275,12 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not is_allowed(user_id):
         return
 
-    await update.message.reply_text("Checking...")
+    await typing_then_reply(context.bot, update.effective_chat.id, "Checking...")
     await set_submitted(user_id)
 
     channel = await _resolve_channel(user_id, "", user.get("pending_channel_id", ""))
     if not channel:
-        await update.message.reply_text("Which channel is this payment for?")
+        await typing_then_reply(context.bot, update.effective_chat.id, "Which channel is this payment for?")
         await db.set_state(user_id, State.PAYMENT_PENDING)
         return
 
@@ -297,7 +302,7 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if note:
             msg += f" {note}"
         msg += "\n\nSend a clear payment screenshot."
-        await update.message.reply_text(msg)
+        await typing_then_reply(context.bot, update.effective_chat.id, msg)
         await tracker.track(user_id, tracker.PAYMENT_REJECTED, reason="suspicious", channel=channel["id"])
         await notify.payment_suspicious(user_id, u.username or str(user_id), note)
         return
@@ -315,7 +320,8 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await db.set_state(user_id, State.PAYMENT_PENDING)
         status = result.get("status", "unknown")
-        await update.message.reply_text(
+        await typing_then_reply(
+            context.bot, update.effective_chat.id,
             f"Payment shows as {status}. Send a successful payment screenshot."
         )
         await tracker.track(user_id, tracker.PAYMENT_REJECTED, status=status, channel=channel["id"])

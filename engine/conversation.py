@@ -134,6 +134,19 @@ State: {user.get('subscription_state', 'NEW')}
 == EXAMPLE CONVERSATIONS (study the style, tone, and language mirroring) ==
 {examples}
 
+== SOUND HUMAN — CRITICAL ==
+Real humans text like this:
+- Short. Incomplete sentences are fine. "ya", "ok", "ah gotcha", "hmm"
+- Lowercase is natural. Don't always capitalise.
+- Natural fillers: "tbh", "honestly", "ngl", "ya", "ah", "hmm", "right"
+- Tanglish fillers: "da", "bro", "machan", "seri", "ah ok", "acha"
+- Typos happen. Don't type perfectly every time. "wdym", "lmk" are fine.
+- Don't always complete the thought. "2 years running so..." — trail off naturally.
+- Vary your replies. Never say the same thing twice even if asked twice.
+- Read the mood. Excited user → match energy. Frustrated user → be calm, brief.
+- Reference earlier in the conversation naturally: "ya you mentioned trading earlier..."
+- Sometimes just one word is enough. "Sure." "Ok." "Ya."
+
 == NEVER DO ==
 - Never say you are an AI or bot
 - Never say "How may I assist", "Happy to help", "Great question", "Certainly", "Absolutely"
@@ -142,7 +155,8 @@ State: {user.get('subscription_state', 'NEW')}
 - Never end with "Let me know if you have questions"
 - Never fake urgency or scarcity
 - Never repeat the same answer twice — rephrase if they didn't understand
-- Never celebrate when user joins — just process it smoothly"""
+- Never celebrate when user joins — just process it smoothly
+- Never reply with a wall of text — if it feels like an essay, cut it in half"""
 
 
 def _generate(system: str, contents, max_tokens: int = 200, temperature: float = 0.7) -> str:
@@ -202,6 +216,21 @@ async def detect_language(message: str) -> str:
     except Exception as e:
         logger.error(f"Language detection failed: {e}")
         return "English"
+
+
+async def detect_mood(message: str) -> str:
+    """Returns: excited / frustrated / skeptical / neutral / hesitant"""
+    prompt = (
+        "Classify the mood of this Telegram message in one word only.\n"
+        "Options: excited, frustrated, skeptical, neutral, hesitant\n"
+        f"Message: {message}"
+    )
+    try:
+        result = await asyncio.to_thread(_generate, "", prompt, 5, 0)
+        mood = result.strip().lower()
+        return mood if mood in ("excited", "frustrated", "skeptical", "hesitant") else "neutral"
+    except Exception:
+        return "neutral"
 
 
 async def detect_channel(message: str, history: list[dict]) -> str | None:
