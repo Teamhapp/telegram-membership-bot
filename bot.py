@@ -192,7 +192,18 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     history = await db.get_recent_messages(user_id)
 
     extra = ""
-    if subs:
+    if intent == "BROWSE":
+        channels = ch_registry.load_all()
+        ch_desc = "\n".join(
+            f"- {c['name']} ({c['id']}): {c['description']} — {c['price']}/month"
+            for c in channels
+        )
+        extra = (
+            f"User is exploring/browsing. They haven't asked to join yet.\n"
+            f"Available channels:\n{ch_desc}\n"
+            f"Ask one natural question to understand what they're looking for, then recommend the right channel."
+        )
+    elif subs:
         lines = [f"{s['channel_id']}: {s['status']} until {s['expires_at']}" for s in subs]
         extra = "Subscriptions: " + ", ".join(lines)
 

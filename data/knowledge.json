@@ -1,42 +1,62 @@
 {
-  "community_name": "Premium Community",
-  "description": "Daily trading signals, market analysis, and a tight-knit community of serious traders.",
-  "price": "₹999/month",
+  "platform_name": "Our Community",
+  "description": "A curated Telegram channel platform. Each channel is focused, high-quality, and managed by real people who know the space.",
   "refund_policy": "No refunds after access is granted.",
-  "content_type": "Daily signals, live market commentary, weekly reviews, member-only discussions.",
-  "who_is_it_for": "People serious about trading — beginners who want to learn fast, and experienced traders who want a second perspective.",
-  "who_its_not_for": "People looking for get-rich-quick tips or those who won't put in the work.",
 
-  "social_proof": {
-    "active_members": "200+",
-    "typical_result": "Most members say they recovered the subscription cost within the first week",
-    "retention": "Most members renew every month without being asked",
-    "community_vibe": "Very active group — people share their trades, ask questions, learn from each other"
-  },
+  "platform_values": [
+    "Quality over quantity — every channel is hand-picked",
+    "No spam, no noise — just relevant content",
+    "Active communities where members actually engage",
+    "Real admins who respond"
+  ],
 
-  "honest_limitations": [
-    "We don't guarantee profits — no one can",
-    "You need to do your own analysis too — we give direction, not hand-holding",
-    "If you're looking for 100% win rate signals, this isn't the place"
+  "channels": [
+    {
+      "id": "channel_1",
+      "name": "Premium Signals",
+      "content_type": "Daily trading signals and market analysis",
+      "who_for": "People serious about trading — beginners who want to learn fast, and experienced traders who want a second perspective",
+      "price": "₹999/month",
+      "highlights": "Daily signals, live market commentary, weekly reviews, active member group",
+      "honest_limitations": [
+        "No profit guarantees",
+        "You need to apply your own judgment — we give direction, not hand-holding",
+        "If you want 100% win rate signals, this isn't the place"
+      ],
+      "social_proof": "200+ members, running 2 years, most members renew every month"
+    },
+    {
+      "id": "channel_2",
+      "name": "VIP Mentorship",
+      "content_type": "1-on-1 mentorship and exclusive deep-dive content",
+      "who_for": "Serious learners who want direct guidance, not just signals",
+      "price": "₹1999/month",
+      "highlights": "Direct access, exclusive content, personalised guidance",
+      "honest_limitations": [
+        "Higher price — for people who are actually serious",
+        "Limited spots — not opened to everyone"
+      ],
+      "social_proof": "Small group by design — quality over scale"
+    }
   ],
 
   "objection_responses": {
     "scam": "Been running for 2 years. 200+ members. If it was a scam it wouldn't last this long.",
-    "expensive": "₹999 is less than one bad trade. Most members make it back in the first week.",
-    "worth_it": "Depends on how serious you are. Serious traders find it worth it. Casual ones don't.",
-    "free_alternatives": "There are free groups — but you get what you pay for. Signal quality is different.",
-    "proof": "I can't show you P&L screenshots of others — privacy. But check how long we've been running.",
-    "think_about_it": "Take your time. No rush. Most people who say that either join next week or regret not joining sooner."
+    "expensive": "Less than one bad trade. Most members make it back in the first week.",
+    "worth_it": "Depends on how serious you are. Serious ones find it worth it.",
+    "free_alternatives": "There are free groups — but signal quality and community engagement are completely different.",
+    "proof": "Can't share P&L of others — privacy. But check how long we've been running.",
+    "think_about_it": "Take your time. No rush."
   },
 
   "faqs": [
     {
       "question": "Is this beginner friendly?",
-      "answer": "Yes — many members started as beginners. The explanations are clear."
+      "answer": "Yes — many members started as beginners. Explanations are clear."
     },
     {
       "question": "How many signals per day?",
-      "answer": "2-5 quality signals. We don't spam."
+      "answer": "2-5 quality signals. No spam."
     },
     {
       "question": "Which market?",
@@ -45,6 +65,10 @@
     {
       "question": "Can I try before paying?",
       "answer": "No free trial — but ₹999 is a low-risk way to check it out for a month."
+    },
+    {
+      "question": "Can I ask questions in the group?",
+      "answer": "Yes — very active group. Members share trades, ask questions, discuss markets throughout the day."
     }
   ]
 }

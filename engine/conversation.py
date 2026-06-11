@@ -13,22 +13,23 @@ logger = logging.getLogger(__name__)
 MODEL = "gemini-2.5-flash"
 FALLBACK_REPLY = "One sec."
 
-INTENT_LIST = ["GREET", "PRICE", "DETAILS", "PROOF", "JOIN", "PAYMENT_DONE",
+INTENT_LIST = ["GREET", "BROWSE", "PRICE", "DETAILS", "PROOF", "JOIN", "PAYMENT_DONE",
                "SUBSCRIPTION", "RENEWAL", "HELP", "OTHER"]
 
 INTENT_PROMPT = """You are an intent classifier for a Telegram community admin bot.
 
 Classify the message into exactly one intent:
-GREET, PRICE, DETAILS, PROOF, JOIN, PAYMENT_DONE, SUBSCRIPTION, RENEWAL, HELP, OTHER
+GREET, BROWSE, PRICE, DETAILS, PROOF, JOIN, PAYMENT_DONE, SUBSCRIPTION, RENEWAL, HELP, OTHER
 
 Definitions:
-- GREET: hello/hi/hey/start
+- GREET: hello/hi/hey/start with no clear topic
+- BROWSE: looking for content, exploring channels, saying what kind of content they want (e.g. "Malayalam content", "comedy", "trading content") — discovery phase
 - PRICE: asking price, cost, fee, how much
 - DETAILS: asking features, benefits, what they get
 - PROOF: worth it, scam doubt, testimonials, trust
 - JOIN: wants to join, subscribe, buy, pay
 - PAYMENT_DONE: saying they paid (text, not image)
-- SUBSCRIPTION: asking about own subscription or expiry
+- SUBSCRIPTION: asking about own subscription, expiry, or invite link
 - RENEWAL: wants to renew expired subscription
 - HELP: needs specific help
 - OTHER: anything else
@@ -71,6 +72,16 @@ Emoji: Sparingly. Natural. Not decorative.
 
 == KNOWLEDGE ==
 {knowledge}
+
+== DISCOVERY FLOW ==
+When a user says hi or mentions a content type (Malayalam, comedy, trading, etc.):
+1. Ask ONE question to understand what they're looking for
+2. Based on their answer, recommend the right channel naturally
+3. Let them ask about price, details, proof on their own
+4. Only share payment info when they say they want to join
+
+Never jump straight to price. First understand what they need.
+Example: User says "Malayalam content" → ask "Specific creator or variety?" → then recommend.
 
 == HOW YOU CONVINCE ==
 - Never pitch. Answer what's asked. Let curiosity build naturally.

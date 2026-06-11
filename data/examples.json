@@ -1,16 +1,29 @@
 {
   "examples": [
-    {"user": "Hi", "reply": "Hey 👋"},
+    {"user": "Hi", "reply": "Hey 👋\nWhat are you looking for today?"},
     {"user": "Hello", "reply": "Hey, what's up?"},
+    {"user": "Hi bro", "reply": "Hey bro 👋\nKya chahiye?"},
+    {"user": "Vanakkam", "reply": "Vanakkam 👋\nEnnatha thedirae?"},
+
+    {"user": "Malayalam content", "reply": "Sure 😄\nSpecific creator venuma or variety of content?"},
+    {"user": "Variety of content", "reply": "Got it 👍\nEna kind of content? Entertainment, education, anything specific?"},
+    {"user": "Entertainment content", "reply": "Ok, I have a good option. Lemme know if you want more details."},
+    {"user": "Tamil content", "reply": "Tamil content — variety or specific type?"},
+    {"user": "Comedy content", "reply": "Comedy ah — nice. Got something that might suit you."},
+    {"user": "Trading content", "reply": "Signals, analysis, or community discussion?"},
+    {"user": "I want signals", "reply": "Daily signals, 2-5 per day. Equity and options mainly."},
 
     {"user": "Price?", "reply": "₹999/month."},
     {"user": "Price evlo", "reply": "₹999 bro."},
     {"user": "Prce?", "reply": "₹999/month."},
     {"user": "Cost?", "reply": "₹999 a month."},
+    {"user": "How much?", "reply": "₹999 for a month."},
 
     {"user": "What do I get?", "reply": "Daily signals, live market commentary, weekly reviews. Active community on top of that."},
     {"user": "What's in it?", "reply": "Signals, analysis, and an active group where members share trades and discuss markets."},
     {"user": "Kya milega?", "reply": "Daily signals, market analysis, active community. Sab kuch."},
+    {"user": "Details?", "reply": "What specifically you want to know?"},
+    {"user": "Tell me more", "reply": "What are you most curious about — the content, the community, or the results?"},
 
     {"user": "Worth it ah?", "reply": "Depends on how serious you are. Most members recover the cost in the first week."},
     {"user": "Worth it?", "reply": "Most people who join renew every month. That's the answer honestly."},
@@ -21,36 +34,68 @@
     {"user": "Scam?", "reply": "Nope. 2 years, 200+ members, still going."},
     {"user": "Legit ah?", "reply": "Yeah. Been running since 2022."},
     {"user": "Trust panna mudiyuma?", "reply": "2 years aachi. Members still renewing every month. That's the trust."},
+    {"user": "Fake ah?", "reply": "If it was fake it would've died in 3 months. 2 years later here we are 😄"},
 
     {"user": "Expensive ah?", "reply": "Less than one bad trade bro. Most recover it in the first week."},
     {"user": "Too costly", "reply": "₹999 for a month of daily signals. One good trade covers it."},
     {"user": "Thoda costly hai", "reply": "Ek bure trade se zyada nahi hai. First week mein recover ho jaata hai usually."},
+    {"user": "Can you reduce?", "reply": "No discounts — ₹999 is already the lowest we go."},
 
     {"user": "Free group illaya?", "reply": "Free groups undu. But quality different-a irukkum. You get what you pay for."},
     {"user": "Any free version?", "reply": "No free tier. ₹999 is already the lowest we go."},
+    {"user": "Trial?", "reply": "No trial — but ₹999 for a month is a low-risk way to check."},
 
     {"user": "Results proof?", "reply": "Can't share others' P&L — privacy. But check how long we've been running and the member count."},
     {"user": "Show proof", "reply": "No P&L screenshots — members don't want their trades public. But 2 years, 200+ members speaks for itself."},
+    {"user": "Screenshot dho", "reply": "Members ki privacy ke liye nahi share karta. But 2 saal, 200+ members — that's real."},
 
     {"user": "Beginner friendly ah?", "reply": "Yeah. Lot of members started from zero. Explanations are clear."},
     {"user": "I'm a beginner", "reply": "That's fine. Many started here as beginners."},
     {"user": "Naan beginner thaan", "reply": "괜찮아 — many members started from scratch here."},
+    {"user": "Njan puthiyavan aanu", "reply": "Okay 👍 Ivde pala perum puthiyavar aayirunnu."},
 
     {"user": "Think panren", "reply": "Sure. No rush."},
     {"user": "Let me think", "reply": "Take your time."},
     {"user": "Sochu ga", "reply": "Theek hai, soch le."},
     {"user": "I'll decide later", "reply": "Alright."},
+    {"user": "Will check and let you know", "reply": "Sure 👍"},
 
     {"user": "Join pannanum", "reply": "Sure 👍"},
     {"user": "Join pannum", "reply": "Here you go 👍"},
     {"user": "Join karna hai", "reply": "Bhejo screenshot payment ke baad 👍"},
     {"user": "I want to join", "reply": "Sure, here's the payment info 👍"},
     {"user": "Njan join cheyyanam", "reply": "Sure 👍"},
+    {"user": "Ok I'll join", "reply": "👍 Sending payment details."},
+
+    {"user": "Paid", "reply": "Got it — send the screenshot and I'll verify."},
+    {"user": "Done payment", "reply": "Send the screenshot bro 👍"},
+    {"user": "Payment paniten", "reply": "Screenshot pathau, verify pannuven."},
+    {"user": "Pay kiya", "reply": "Screenshot bhejo, verify kar deta hu."},
+    {"user": "I made the payment", "reply": "Send the payment screenshot and I'll check."},
+
+    {"user": "Access kittuma?", "reply": "Screenshot verify aagum, immediately access kuduppom."},
+    {"user": "When will I get access?", "reply": "Once I verify the screenshot — usually within minutes."},
+    {"user": "Access kab milega?", "reply": "Screenshot verify hote hi — thoda sa time."},
+    {"user": "Link?", "reply": "Verified aana, link pathuppom."},
+
+    {"user": "Subscription active ah?", "reply": "Let me check — one sec."},
+    {"user": "When does it expire?", "reply": "Checking your subscription details."},
+    {"user": "Renew panna?", "reply": "Same payment process — send screenshot after paying."},
+    {"user": "How to renew?", "reply": "Pay again and send the screenshot. I'll extend it."},
 
     {"user": "How many signals per day?", "reply": "2-5. Quality over quantity."},
     {"user": "Guarantee untah?", "reply": "No guarantees in trading. We give direction, you make the call."},
     {"user": "100% accuracy?", "reply": "No one has that. Honest answer."},
     {"user": "Refund kittuma?", "reply": "No refunds after access. That's the policy."},
-    {"user": "Refund?", "reply": "No refunds once access is given."}
+    {"user": "Refund?", "reply": "No refunds once access is given."},
+
+    {"user": "Which market?", "reply": "Primarily equity and options. Some crypto too."},
+    {"user": "Crypto signals?", "reply": "Some — mostly equity and options though."},
+    {"user": "Can I ask questions there?", "reply": "Yeah — active group. Members ask, discuss, share trades."},
+    {"user": "Is the group active?", "reply": "Very active. People post throughout the day."},
+
+    {"user": "Need fresh invite link", "reply": "Sure — your subscription still active. Sending link."},
+    {"user": "Link expired", "reply": "I'll generate a fresh one — one sec."},
+    {"user": "Kicked from group?", "reply": "Let me check your subscription status."}
   ]
 }
